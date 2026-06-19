@@ -264,7 +264,7 @@ io.on('connection', (socket) => {
         isCriminal: p.isCriminal,
         caseData: room.caseData,
         criminalIdx: room.criminalIdx,
-        suspects: caseData?.suspects || [],
+        suspects: caseData?.suspect_names || caseData?.suspects || [],
       })
     })
 
@@ -410,7 +410,7 @@ async function resolveVote(roomId) {
   const tie = topSuspects.length > 1
   const votesSummary = Object.fromEntries(
     Object.entries(voteTally).map(([idx, cnt]) => [
-      room.caseData?.suspects[parseInt(idx)] || `Suspeito ${parseInt(idx) + 1}`,
+      room.caseData?.suspect_names?.[parseInt(idx)] || `Suspeito ${parseInt(idx) + 1}`,
       cnt
     ])
   )
@@ -422,13 +422,13 @@ async function resolveVote(roomId) {
     criminalIdx: room.criminalIdx,
     criminalName: room.players.find(p => p.isCriminal)?.name || null,
     winnerSuspect: sortedVotes[0] ? parseInt(sortedVotes[0][0]) : null,
-    winnerName: room.caseData?.suspects[sortedVotes[0] ? parseInt(sortedVotes[0][0]) : 0] || null,
+    winnerName: room.caseData?.suspect_names?.[sortedVotes[0] ? parseInt(sortedVotes[0][0]) : 0] || null,
     voteCount: topVoteCount,
-    tieSuspects: topSuspects.map(i => room.caseData?.suspects[i] || `Suspeito ${i + 1}`),
+    tieSuspects: topSuspects.map(i => room.caseData?.suspect_names?.[i] || `Suspeito ${i + 1}`),
     votesSummary,
     allVotes: room.players.map(p => ({
       name: p.name,
-      vote: room.caseData?.suspects[room.votes[p.playerId]] || null,
+      vote: room.caseData?.suspect_names?.[room.votes[p.playerId]] || null,
       isCriminal: p.isCriminal,
     })),
     solution: room.caseData?.solution || null,
